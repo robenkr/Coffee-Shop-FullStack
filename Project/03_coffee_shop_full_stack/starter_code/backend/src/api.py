@@ -30,6 +30,22 @@ CORS(app)
         or appropriate status code indicating reason for failure
 '''
 
+
+@app.route('/drinks', methods=['GET'])
+def get_drinks():
+    query = Drink.query.order_by(Drink.id).all()
+
+    drinks = [drink.short() for drink in query]
+
+    if len(drinks) == 0:
+        not_found(404)
+
+    return jsonify({
+        "success": True,
+        "drinks": drinks
+    })
+
+
 # TODO implement endpoint
 '''
     GET /drinks-detail
@@ -120,7 +136,7 @@ def not_found(error):
 
 
 @app.errorhandler(401)
-def not_found(error):
+def unauthorized(error):
     return jsonify({
         "success": False,
         "error": 401,
@@ -129,7 +145,7 @@ def not_found(error):
 
 
 @app.errorhandler(403)
-def not_found(error):
+def forbidden(error):
     return jsonify({
         "success": False,
         "error": 403,
