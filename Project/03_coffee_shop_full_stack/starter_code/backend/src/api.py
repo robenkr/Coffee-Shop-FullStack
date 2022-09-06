@@ -66,6 +66,24 @@ def get_drinks():
         or appropriate status code indicating reason for failure
 '''
 
+
+@app.route('/drinks-detail', methods=['GET'])
+@cross_origin()
+def get_drinks_detail():
+    # TODO need to implement permission
+    query = Drink.query.order_by(Drink.id).all()
+
+    drinks = [drink.long() for drink in query]
+
+    if len(drinks) == 0:
+        not_found(404)
+
+    return jsonify({
+        "success": True,
+        "drinks": drinks
+    })
+
+
 # TODO implement endpoint
 '''
     POST /drinks
