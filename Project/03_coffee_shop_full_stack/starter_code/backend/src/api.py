@@ -140,6 +140,24 @@ def create_drinks(self):
         or appropriate status code indicating reason for failure
 '''
 
+
+@app.route('/drinks/<int:drink_id>', methods=['DELETE'])
+@cross_origin()
+@requires_auth('delete:drinks')
+def delete_drink(self, drink_id):
+    drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
+
+    if drink is None:
+        not_found(404)
+
+    drink.delete()
+
+    return jsonify({
+        'success': True,
+        'deleted': drink_id
+    })
+
+
 # Error Handling
 '''
 Example error handling for unprocessable entity
