@@ -94,6 +94,29 @@ def get_drinks_detail(self):
         or appropriate status code indicating reason for failure
 '''
 
+
+@app.route('/drinks', methods=['POST'])
+@cross_origin()
+@requires_auth('post:drinks')
+def create_drinks(self):
+    body = request.get_json()
+
+    try:
+        drink = Drink(
+            title=body.get('title', None),
+            recipe=json.dumps(body.get('recipe', None))
+        )
+        drink.insert()
+
+        return jsonify({
+            "success": True,
+            "drinks": drink.long()
+        })
+    except Exception as e:
+        print('ERROR(post:drinks)=>', e)
+        return unprocessable(422)
+
+
 # TODO implement endpoint
 '''
     PATCH /drinks/<id>
