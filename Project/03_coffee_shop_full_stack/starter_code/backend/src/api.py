@@ -69,8 +69,8 @@ def get_drinks():
 
 @app.route('/drinks-detail', methods=['GET'])
 @cross_origin()
-def get_drinks_detail():
-    # TODO need to implement permission
+@requires_auth('get:drinks-detail')
+def get_drinks_detail(self):
     query = Drink.query.order_by(Drink.id).all()
 
     drinks = [drink.long() for drink in query]
