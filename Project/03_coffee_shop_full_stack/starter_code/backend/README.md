@@ -85,3 +85,55 @@ There are `@TODO` comments throughout the `./backend/src`. We recommend tackling
 
 1. `./src/auth/auth.py`
 2. `./src/api.py`
+
+## API Reference
+
+### Getting Started
+
+- Base URL: At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at
+  the default, `http://127.0.0.1:5000/`, which is set as a proxy in the frontend configuration.
+- Authentication: This version of the application require authentication to retrieve some data.
+
+### Error Handling
+
+Errors are returned as JSON objects in the following format:
+
+```
+{
+    "success": False, 
+    "error": 404,
+    "message": "Not found"
+}
+```
+
+The API will return two error types when requests fail:
+
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Resource Not Found
+- 422: Unprocessable
+
+### Endpoints
+
+#### PATCH /drinks/{drink_id}
+
+- General:
+  - Update the drink of the given ID if it exists. Returns the updated drink and success value object.
+- `curl http://127.0.0.1:5000/drinks/1 -X PATCH -H "Authorization: Bearer {token}" -H "Content-Type: application/json" -d '{"title": "water", "recipe":[{"name": "water", "color": "black", "parts": 2}]'`
+
+```
+{
+    "drinks": {
+        "id": 1,
+        "recipe": [
+            {
+                "color": "black",
+                "name": "water",
+                "parts": 2
+            }
+        ],
+        "title": "water"
+    },
+    "success": true
+}
+```

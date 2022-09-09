@@ -129,6 +129,33 @@ def create_drinks(self):
         or appropriate status code indicating reason for failure
 '''
 
+
+@app.route('/drinks/<int:drink_id>', methods=['PATCH'])
+@cross_origin()
+@requires_auth('patch:drinks')
+def update_drink(self, drink_id):
+    body = request.get_json()
+
+    try:
+        drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
+
+        if drink is None:
+            not_found(404)
+
+        # Populate Data
+        drink.title = body.get('title')
+        drink.recipe = json.dumps(body.get('recipe'))
+
+        drink.update()
+
+        return jsonify({
+            "success": True,
+            "drinks": drink.long()
+        })
+    except Exception as e:
+        print('ERROR(patch:drinks)=>', e)
+        return unprocessable(422)
+
 # TODO implement endpoint
 '''
     DELETE /drinks/<id>
