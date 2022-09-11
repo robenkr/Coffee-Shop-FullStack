@@ -156,6 +156,7 @@ def update_drink(self, drink_id):
         print('ERROR(patch:drinks)=>', e)
         return unprocessable(422)
 
+
 # TODO implement endpoint
 '''
     DELETE /drinks/<id>

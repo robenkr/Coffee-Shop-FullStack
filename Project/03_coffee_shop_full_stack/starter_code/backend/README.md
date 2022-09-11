@@ -115,6 +115,23 @@ The API will return two error types when requests fail:
 
 ### Endpoints
 
+#### POST /drinks
+
+- General:
+  - Creates a new drink using the submitted title and recipe. Returns the created
+    drink, and success.
+- `curl http://127.0.0.1:5000/drinks -X POST -H "Authorization: Bearer {token}" -H "Content-Type: application/json" -d '{"title": "chilli", "recipe":[{"name": "chilli", "color": "red", "parts": 2}]'`
+
+```
+{
+    "drinks": {
+        "id": 2,
+        "recipe": "[{"name": "chilli", "color": "red", "parts": 2}]",
+        "title": "chilli"
+    },
+    "success": true
+}
+```
 #### PATCH /drinks/{drink_id}
 
 - General:
@@ -134,6 +151,114 @@ The API will return two error types when requests fail:
         ],
         "title": "water"
     },
+    "success": true
+}
+```
+#### DELETE /drinks/{drink_id}
+
+- General:
+  - Deletes the drink of the given ID if it exists. Returns the id of the deleted drink and success value.
+- `curl -X DELETE -H "Authorization: Bearer {token}" http://127.0.0.1:5000/drinks/1`
+
+```
+{
+    "deleted": 1,
+    "success": true
+}
+```
+#### GET /drinks
+
+- General:
+  - Returns a short list of drinks objects and success value.
+- Sample: `curl http://127.0.0.1:5000/drinks`
+
+``` 
+{
+    "drinks": [
+        {
+            "id": 1,
+            "recipe": [
+                {
+                    "color": "blue",
+                    "parts": 1
+                }
+            ],
+            "title": "water"
+        },
+        {
+            "id": 2,
+            "recipe": [
+                {
+                    "color": "brown",
+                    "parts": 2
+                },
+                {
+                    "color": "blue",
+                    "parts": 2
+                },
+                {
+                    "color": "white",
+                    "parts": 1
+                },
+                {
+                    "color": "green",
+                    "parts": 1
+                }
+            ],
+            "title": "ginger light"
+        }
+    ],
+    "success": true
+}
+```
+
+#### GET /drinks-detail
+
+- General:
+  - Returns a long(detailed) list of drinks objects and success value.
+- Sample: `curl http://127.0.0.1:5000/drinks-detail`
+
+``` 
+{
+    "drinks": [
+        {
+            "id": 1,
+            "recipe": [
+                {
+                    "color": "blue",
+                    "name": "water",
+                    "parts": 1
+                }
+            ],
+            "title": "water"
+        },
+        {
+            "id": 2,
+            "recipe": [
+                {
+                    "color": "brown",
+                    "name": "ginger",
+                    "parts": 2
+                },
+                {
+                    "color": "blue",
+                    "name": "water",
+                    "parts": 2
+                },
+                {
+                    "color": "white",
+                    "name": "sugar",
+                    "parts": 1
+                },
+                {
+                    "color": "green",
+                    "name": "lemon",
+                    "parts": 1
+                }
+            ],
+            "title": "ginger light"
+        }
+    ],
     "success": true
 }
 ```
