@@ -33,7 +33,10 @@ class CoffeeShopTestCase(unittest.TestCase):
                 }
             ]
         }
-        self.test_token = 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im9oYmljX2ZQZmhEcGIzSHBKODd2NCJ9.eyJpc3MiOiJodHRwczovL3JvYmVua3IudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYzMTlmOTk3OTY0ODUyZGQ3YTE4MzA2NSIsImF1ZCI6ImNvZmZlZXNob3AiLCJpYXQiOjE2NjMxOTc2OTIsImV4cCI6MTY2MzIwNDg5MiwiYXpwIjoiYklLS290UTVlYk1Cb2xiWWhRNUhqRnhERmkySzN0anoiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTpkcmlua3MiLCJnZXQ6ZHJpbmtzIiwiZ2V0OmRyaW5rcy1kZXRhaWwiLCJwYXRjaDpkcmlua3MiLCJwb3N0OmRyaW5rcyJdfQ.TRqhQqxB4EAFIjBcwVqQMGLsxsaKIAt5TSK4gEIXzgiSfrQlsh03pkhIcZBGofGC2PgTA_VvkGap8BgqZdMbee048h5WD-9exrZYEcjzI8QOfpfw_3YS9ZdC5p_PYJvBLIJkvNh-30Lc9s07gpiwKPqDgj7beO9WDqU7fK8r2r2IE-hcy_JNvdhrS6mjcVQFP9uU_hzylac1I73euhRqtl69xlsmIB7fGso31hig4LbG9l6CCrvaTb-azZxcECpkAZ6Gof4gUcK0vBFpZaQKZ-bC9kREzfvkQ9n-jTwGntdMYxy8A1xiKQ1AN1dXyjZps3rcrBnc35NbIUnIZB4Fwg'
+        self.update_drink = {
+            'title': 'Chilli Soda'
+        }
+        self.test_token = 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im9oYmljX2ZQZmhEcGIzSHBKODd2NCJ9.eyJpc3MiOiJodHRwczovL3JvYmVua3IudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYzMTlmOTk3OTY0ODUyZGQ3YTE4MzA2NSIsImF1ZCI6ImNvZmZlZXNob3AiLCJpYXQiOjE2NjM0MzMwMzMsImV4cCI6MTY2MzUxOTQzMywiYXpwIjoiYklLS290UTVlYk1Cb2xiWWhRNUhqRnhERmkySzN0anoiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTpkcmlua3MiLCJnZXQ6ZHJpbmtzIiwiZ2V0OmRyaW5rcy1kZXRhaWwiLCJwYXRjaDpkcmlua3MiLCJwb3N0OmRyaW5rcyJdfQ.IdtPPTO-wne-MQKhAd-KI-VdL9q5xMbHRwIMZXAaUvsag-ZN7-tVUPkR_sVq9IILwRK20q9aSWaZmrFdKXDCDjJ27zBFG6ZuTUq9ioWyU3opX1qdYYd8rBeqcqezO5YcMnpgzp1265LaodqHKQ5sSbgiUCkEz9jaj1t1319pH1Qf6p7VvgWw6ZHNOYhcwOxiTL-7L9ChJ9cV2aJEI8A5kA7TrXDkdrNFS0HlX3n09eNkk6JBSWivtkBfeU-Csjl06agPDoVOHVS7KKk7Wjswq6BG5f1qf46NfcMkLKpWWV6K3IthBp4o6MsEDh-Yzq2enArHTDPW2ClyjOwMUWhapA'
 
     with app.app_context():
         db_drop_and_create_all()
@@ -91,7 +94,7 @@ class CoffeeShopTestCase(unittest.TestCase):
         self.assertEqual(data['deleted'], 1)
         self.assertEqual(drink, None)
 
-    def test_401_delete_drink(self):
+    def test_404_delete_drink(self):
         res = self.client().delete(
             'drinks/33',
             headers={
@@ -100,14 +103,28 @@ class CoffeeShopTestCase(unittest.TestCase):
         )
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 401)
+        self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Unauthorized')
+        self.assertEqual(data['message'], 'resource not found')
 
     def test_create_drinks(self):
         res = self.client().post(
             'drinks',
             json= self.new_drink,
+            headers={
+                'Authorization': self.test_token,
+            },
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['drinks']))
+
+    def test_update_drink(self):
+        res = self.client().patch(
+            'drinks/2',
+            json= self.update_drink,
             headers={
                 'Authorization': self.test_token,
             },

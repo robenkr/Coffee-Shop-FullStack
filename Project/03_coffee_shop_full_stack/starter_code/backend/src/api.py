@@ -49,7 +49,7 @@ def get_drinks():
     drinks = [drink.short() for drink in query]
 
     if len(drinks) == 0:
-        not_found(404)
+        return not_found(404)
 
     return jsonify({
         "success": True,
@@ -76,7 +76,7 @@ def get_drinks_detail(self):
     drinks = [drink.long() for drink in query]
 
     if len(drinks) == 0:
-        not_found(404)
+        return not_found(404)
 
     return jsonify({
         "success": True,
@@ -140,11 +140,14 @@ def update_drink(self, drink_id):
         drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
 
         if drink is None:
-            not_found(404)
+            return not_found(404)
 
         # Populate Data
-        drink.title = body.get('title')
-        drink.recipe = json.dumps(body.get('recipe'))
+        if body.get('title'):
+            drink.title = body.get('title')
+
+        if body.get('recipe'):
+            drink.recipe = json.dumps(body.get('recipe'))
 
         drink.update()
 
@@ -176,7 +179,7 @@ def delete_drink(self, drink_id):
     drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
 
     if drink is None:
-        not_found(404)
+        return not_found(404)
 
     drink.delete()
 
