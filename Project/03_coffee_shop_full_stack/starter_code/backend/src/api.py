@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, make_response
 from sqlalchemy import exc
 import json
 from flask_cors import CORS, cross_origin
@@ -51,10 +51,10 @@ def get_drinks():
     if len(drinks) == 0:
         return not_found(404)
 
-    return jsonify({
+    return make_response(jsonify({
         "success": True,
         "drinks": drinks
-    })
+    }))
 
 
 # TODO implement endpoint
@@ -78,10 +78,10 @@ def get_drinks_detail(self):
     if len(drinks) == 0:
         return not_found(404)
 
-    return jsonify({
+    return make_response(jsonify({
         "success": True,
         "drinks": drinks
-    })
+    }))
 
 
 # TODO implement endpoint
@@ -108,10 +108,10 @@ def create_drinks(self):
         )
         drink.insert()
 
-        return jsonify({
+        return make_response(jsonify({
             "success": True,
             "drinks": drink.long()
-        })
+        }))
     except Exception as e:
         print('ERROR(post:drinks)=>', e)
         return unprocessable(422)
@@ -151,10 +151,10 @@ def update_drink(self, drink_id):
 
         drink.update()
 
-        return jsonify({
+        return make_response(jsonify({
             "success": True,
-            "drinks": drink.long()
-        })
+            "drinks": [drink.long()]
+        }))
     except Exception as e:
         print('ERROR(patch:drinks)=>', e)
         return unprocessable(422)
@@ -183,10 +183,10 @@ def delete_drink(self, drink_id):
 
     drink.delete()
 
-    return jsonify({
+    return make_response(jsonify({
         'success': True,
         'deleted': drink_id
-    })
+    }))
 
 
 # Error Handling
@@ -196,12 +196,12 @@ Example error handling for unprocessable entity
 
 
 @app.errorhandler(422)
-def unprocessable(error):
-    return jsonify({
+def unprocessable(error, message='unprocessable'):
+    return make_response(jsonify({
         "success": False,
-        "error": 422,
-        "message": "unprocessable"
-    }), 422
+        "error": error,
+        "message": message
+    }), 422)
 
 
 # TODO implement error handlers using the @app.errorhandler(error) decorator
@@ -222,12 +222,12 @@ def unprocessable(error):
 
 
 @app.errorhandler(404)
-def not_found(error):
-    return jsonify({
+def not_found(error, message='resource not found'):
+    return make_response(jsonify({
         "success": False,
-        "error": 404,
-        "message": "resource not found"
-    }), 404
+        "error": error,
+        "message": message
+    }), 404)
 
 
 # TODO implement error handler for AuthError
@@ -237,18 +237,18 @@ def not_found(error):
 
 
 @app.errorhandler(401)
-def unauthorized(error):
-    return jsonify({
+def unauthorized(error, message='Unauthorized'):
+    return make_response(jsonify({
         "success": False,
-        "error": 401,
-        "message": "Unauthorized"
-    }), 401
+        "error": error,
+        "message": message
+    }), 401)
 
 
 @app.errorhandler(403)
-def forbidden(error):
-    return jsonify({
+def forbidden(error, message='Forbidden'):
+    return make_response(jsonify({
         "success": False,
-        "error": 403,
-        "message": "Forbidden"
-    }), 403
+        "error": error,
+        "message": message
+    }), 403)
